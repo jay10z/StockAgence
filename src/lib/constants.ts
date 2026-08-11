@@ -9,10 +9,12 @@ export const REJECTION_REASONS = [
 export type RejectionReasonCode = (typeof REJECTION_REASONS)[number]['code'];
 
 export const PRODUCT_CATEGORIES = [
-  'Quincaillerie',
-  'Peinture',
-  'Électricité',
+  'Ciment',
+  'Matériaux de construction',
   'Plomberie',
+  'Électricité',
+  'Peinture',
+  'Quincaillerie',
   'Outillage',
   'Construction',
   'Serrurerie',
@@ -38,6 +40,7 @@ export const PRODUCT_UNITS = [
   'boîte',
   'rouleau',
   'paquet',
+  'bidon',
 ] as const;
 
 export const ROLE_LABELS: Record<string, string> = {

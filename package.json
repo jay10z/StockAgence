@@ -4,10 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "vite --port 5173",
+    "dev:api": "node scripts/local-api.mjs",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed:demo": "node scripts/seed-demo-users.mjs",
+    "seed:mock": "node scripts/seed-mock-data.mjs",
+    "clear:mock": "node scripts/clear-mock-data.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.1",

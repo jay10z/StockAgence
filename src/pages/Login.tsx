@@ -5,6 +5,47 @@ import supabase from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import Loading from '../components/Loading';
 
+const DEMO_PASSWORD = 'Demo1234!';
+
+/** DEV/TEST only — created by `npm run seed:mock`, removed by `npm run clear:mock` */
+const DEMO_ACCOUNTS = [
+  {
+    label: 'Admin (Propriétaire)',
+    email: 'admin@demo.stockagence.cm',
+    password: DEMO_PASSWORD,
+  },
+  {
+    label: 'Entrepôt — Jean-Paul',
+    email: 'jeanpaul@demo.stockagence.cm',
+    password: DEMO_PASSWORD,
+  },
+  {
+    label: 'Entrepôt — Marc',
+    email: 'marc@demo.stockagence.cm',
+    password: DEMO_PASSWORD,
+  },
+  {
+    label: 'Agence Akwa — Pauline',
+    email: 'akwa1@demo.stockagence.cm',
+    password: DEMO_PASSWORD,
+  },
+  {
+    label: 'Agence Bonabéri',
+    email: 'bonaberi1@demo.stockagence.cm',
+    password: DEMO_PASSWORD,
+  },
+  {
+    label: 'Agence Bépanda',
+    email: 'bepanda1@demo.stockagence.cm',
+    password: DEMO_PASSWORD,
+  },
+  {
+    label: 'Agence Makepe',
+    email: 'makepe1@demo.stockagence.cm',
+    password: DEMO_PASSWORD,
+  },
+] as const;
+
 export default function Login() {
   const { user, profile, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
@@ -28,6 +69,15 @@ export default function Login() {
       setError('Entrez votre e-mail et votre mot de passe.');
       return;
     }
+
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+    if (!supabaseUrl || supabaseUrl.includes('YOUR_PROJECT') || supabaseUrl === 'undefined') {
+      setError(
+        'Supabase n’est pas configuré. Vérifiez VITE_SUPABASE_URL dans .env, puis redémarrez le serveur (Ctrl+C puis npx vercel dev).'
+      );
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { data, error: signError } = await supabase.auth.signInWithPassword({
@@ -35,11 +85,14 @@ export default function Login() {
         password,
       });
       if (signError || !data.user) {
-        setError('E-mail ou mot de passe incorrect.');
+        setError(
+          signError?.message?.includes('Invalid login')
+            ? 'E-mail ou mot de passe incorrect. Créez les comptes démo avec: npm run seed:demo'
+            : signError?.message || 'E-mail ou mot de passe incorrect.'
+        );
         return;
       }
 
-      // Load profile immediately (direct Supabase) so redirect is instant
       await refreshProfile();
 
       const { data: profileRow } = await supabase
@@ -54,7 +107,7 @@ export default function Login() {
         navigate('/entrepot', { replace: true });
       }
     } catch {
-      setError('Impossible de se connecter. Réessayez.');
+      setError('Impossible de se connecter. Vérifiez .env et réessayez.');
     } finally {
       setSubmitting(false);
     }
@@ -138,12 +191,28 @@ export default function Login() {
           </button>
 
           <div className="pt-2 border-t border-slate-100">
-            <p className="text-sm text-slate-500 text-center mb-2 font-medium">Comptes démo</p>
-            <div className="space-y-1 text-sm text-slate-600 text-center">
-              <p>Propriétaire : owner@stockagence.cm</p>
-              <p>Entrepôt : entrepot@stockagence.cm</p>
-              <p>Agence : agence@stockagence.cm</p>
-              <p>Mot de passe : password123</p>
+            <p className="text-sm text-amber-800 text-center mb-1 font-bold">
+              Comptes TEST / DEV uniquement
+            </p>
+            <p className="text-xs text-slate-500 text-center mb-3">
+              Données mock — touchez pour remplir. Mot de passe : {DEMO_PASSWORD}
+            </p>
+            <div className="grid grid-cols-1 gap-2 max-h-56 overflow-y-auto pr-1">
+              {DEMO_ACCOUNTS.map((account) => (
+                <button
+                  key={account.email}
+                  type="button"
+                  onClick={() => {
+                    setEmail(account.email);
+                    setPassword(account.password);
+                    setError('');
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-xl border-2 border-slate-200 hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
+                >
+                  <span className="block font-bold text-slate-800">{account.label}</span>
+                  <span className="block text-sm text-slate-500">{account.email}</span>
+                </button>
+              ))}
             </div>
           </div>
         </form>
