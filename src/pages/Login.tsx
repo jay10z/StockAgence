@@ -73,7 +73,7 @@ export default function Login() {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
     if (!supabaseUrl || supabaseUrl.includes('YOUR_PROJECT') || supabaseUrl === 'undefined') {
       setError(
-        'Supabase n’est pas configuré. Vérifiez VITE_SUPABASE_URL dans .env, puis redémarrez le serveur (Ctrl+C puis npx vercel dev).'
+        'Supabase n’est pas configuré. Vérifiez VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY (fichier .env en local, ou variables Vercel en production).'
       );
       return;
     }
