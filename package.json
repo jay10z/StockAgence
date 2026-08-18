@@ -8,6 +8,7 @@
     "dev:web": "vite --port 5173",
     "dev:api": "node scripts/local-api.mjs",
     "build": "tsc -b && vite build",
+    "start": "NODE_ENV=production node scripts/local-api.mjs",
     "test": "vitest run",
     "lint": "eslint .",
     "preview": "vite preview",
