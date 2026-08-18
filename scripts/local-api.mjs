@@ -12,8 +12,7 @@ import { pathToFileURL } from 'url';
 function loadEnv() {
   const path = resolve(process.cwd(), '.env');
   if (!existsSync(path)) {
-    console.error('Missing .env — copy .env.example and fill Supabase keys.');
-    process.exit(1);
+    return;
   }
   for (const line of readFileSync(path, 'utf8').split('\n')) {
     const trimmed = line.trim();
