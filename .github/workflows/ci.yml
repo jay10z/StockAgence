@@ -1,0 +1,52 @@
+# Pull Request Continuous Integration
+# This workflow is the "security guard" for changes that want to enter main.
+
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  functional-tests:
+    name: Functional Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run functional tests
+        run: npm test
+
+      - name: Build the application
+        run: npm run build
+
+  security-tests:
+    name: Security / Vulnerability Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Fails the job if high or critical vulnerabilities are found in npm packages.
+      - name: Audit npm dependencies
+        run: npm audit --audit-level=high

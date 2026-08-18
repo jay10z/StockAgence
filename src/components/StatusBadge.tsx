@@ -1,12 +1,16 @@
+import { getStockStatus } from '../lib/stock';
+
 export function StockStatus({ quantity, minStock }: { quantity: number; minStock: number }) {
-  if (quantity <= 0) {
+  const status = getStockStatus(quantity, minStock);
+
+  if (status === 'out') {
     return (
       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-100 text-red-800">
         Rupture
       </span>
     );
   }
-  if (quantity <= minStock) {
+  if (status === 'low') {
     return (
       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-amber-100 text-amber-800">
         Stock bas
