@@ -22,19 +22,18 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script_stop: true
-          command_timeout: 15m
+          command_timeout: 20m
           script: |
             set -euo pipefail
             cd ~/StockAgence
             git fetch origin
             git checkout main
             git pull origin main
-            npm ci
-            npm run build
-            if pm2 describe stockagence > /dev/null 2>&1; then
-              pm2 restart stockagence --update-env
-            else
-              pm2 start ecosystem.config.cjs
+            if ! sudo docker info > /dev/null 2>&1; then
+              echo "Docker is not installed on this EC2 instance yet."
+              echo "SSH in and run the one-time Docker install commands, then re-run this workflow."
+              exit 1
             fi
-            pm2 save
-            pm2 status
+            pm2 delete stockagence > /dev/null 2>&1 || true
+            sudo docker compose up -d --build
+            sudo docker compose ps
